@@ -1,52 +1,99 @@
 package ippon.tech.iotcontroller;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 
+import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.services.iot.AWSIotClient;
+import com.amazonaws.services.iot.model.GroupNameAndArn;
+import com.amazonaws.services.iot.model.ThingAttribute;
+import com.amazonaws.services.iotdata.AWSIotDataClient;
+
+import java.util.List;
+
+// Based on the example here
+//https://github.com/awslabs/aws-sdk-android-samples/blob/master/TemperatureControl/src/com/amazonaws/demo/temperaturecontrol/TemperatureActivity.java
+//
 public class MainActivity extends AppCompatActivity {
+
+    private CognitoCachingCredentialsProvider credentialsProvider;
+    private AWSIotDataClient iotDataClient;
+    private AWSIotClient iotClient;
+
+    // List of groups
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter recycleviewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+
+        // Setting up Cognito for unauthed access
+        credentialsProvider = new CognitoCachingCredentialsProvider(
+                getApplicationContext(),
+                Constants.AWS.COGNITO_POOL_ID,
+                Constants.AWS.REGION
+        );
+
+        iotDataClient = new AWSIotDataClient(credentialsProvider);
+        iotDataClient.setEndpoint(Constants.AWS.CUSTOM_ENDPOINT);
+
+        iotClient = new AWSIotClient(credentialsProvider);
+        iotClient.setEndpoint(Constants.AWS.CUSTOM_ENDPOINT);
+
+        // Setting up list of groups
+        // https://developer.android.com/guide/topics/ui/layout/recyclerview
+        recyclerView = findViewById(R.id.recycleView);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+
+        recycleviewAdapter = new ThingAdapter(null);
+        recyclerView.setAdapter(recycleviewAdapter);
+
+//        initThingGroupList();
+        initThingList();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    private void initThingGroupList() {
+        AsyncThingGroupDownloader thingGroupDownloader = new AsyncThingGroupDownloader(this, iotDataClient, iotClient);
+        thingGroupDownloader.execute();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    private void initThingList() {
+        AsyncThingDownloader thingDownloader = new AsyncThingDownloader(this, iotDataClient, iotClient);
+        thingDownloader.execute();
+    }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+    public void updateGroupUI(List<GroupNameAndArn> list){
 
-        return super.onOptionsItemSelected(item);
+        recycleviewAdapter = new ThingGroupAdapter(list);
+        recyclerView.setAdapter(recycleviewAdapter);
+        recycleviewAdapter.notifyDataSetChanged();
+    }
+
+    public void updateThingUI(List<ThingAttribute> list){
+
+        recycleviewAdapter = new ThingAdapter(list);
+        recyclerView.setAdapter(recycleviewAdapter);
+        recycleviewAdapter.notifyDataSetChanged();
+    }
+
+    /** Called when the user touches the refresh */
+    public void onRefreshClick(View view) {
+        initThingList();
+        recycleviewAdapter.notifyDataSetChanged();
+    }
+
+    /** Called when the user touches the send device details */
+    public void onSendDeviceDetailsClick(View view) {
+
     }
 }
