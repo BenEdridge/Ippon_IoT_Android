@@ -21,12 +21,10 @@ import java.util.List;
 public class ThingAdapter extends RecyclerView.Adapter<ThingAdapter.ViewHolder> {
 
     private List<ThingAttribute> data;
-    private Context context;
 
-    public ThingAdapter(List<ThingAttribute> data, Context context) {
+    public ThingAdapter(List<ThingAttribute> data) {
 
         this.data = data;
-        this.context = context;
     }
 
     @NonNull
@@ -52,7 +50,7 @@ public class ThingAdapter extends RecyclerView.Adapter<ThingAdapter.ViewHolder> 
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView textView;
 
         public ViewHolder(TextView v) {
@@ -72,12 +70,6 @@ public class ThingAdapter extends RecyclerView.Adapter<ThingAdapter.ViewHolder> 
             intent.putExtra("ThingName", thingName);
 
             v.getContext().startActivity(intent);
-//            ((MainActivity) context).loadThingShadow(thingName);
-        }
-
-        @Override
-        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-
         }
     }
 }

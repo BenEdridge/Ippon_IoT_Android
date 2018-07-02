@@ -50,7 +50,7 @@ public class AsyncThingDownloader extends AsyncTask <Void, Void, AsyncTaskResult
         Context context = parent.get();
 
         if(context!= null) {
-            ((MainActivity) context).updateThingUI((List<ThingAttribute>)result.getResult());
+            ((MainActivity) context).updateThingUI(result.getResult());
             Log.d("POST EXE", result.getResult().toString());
         } else {
             Log.e(this.getClass().toString(), "no context!", result.getError());

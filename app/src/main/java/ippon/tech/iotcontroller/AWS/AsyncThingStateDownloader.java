@@ -26,13 +26,15 @@ public class AsyncThingStateDownloader extends AsyncTask <Void, Void, AsyncTaskR
 
     private AsyncTaskResult<String> result;
     private WeakReference<Activity> parent;
+    private String type;
     private AWSIotDataClient dataClient;
     private String name;
 
-    public AsyncThingStateDownloader(Activity activity, AWSIotDataClient dataClient, String name) {
+    public AsyncThingStateDownloader(Activity activity, AWSIotDataClient dataClient, String name, String type) {
         this.parent = new WeakReference<>(activity);
         this.dataClient = dataClient;
         this.name = name;
+        this.type = type;
     }
 
     @Override
@@ -59,6 +61,7 @@ public class AsyncThingStateDownloader extends AsyncTask <Void, Void, AsyncTaskR
         }
     }
 
+    // Todo fix this nastiness of casting how do we go about Dyanmic type casting??
     @Override
     protected void onPostExecute(AsyncTaskResult<String> result) {
         Context context = parent.get();
@@ -68,7 +71,13 @@ public class AsyncThingStateDownloader extends AsyncTask <Void, Void, AsyncTaskR
             try {
                 String parsedJson = new JSONObject(result.getResult())
                         .toString(spacesToIndentEachLevel);
-                ((MainActivity) context).showThingPopup(parsedJson);
+
+                if(type.equals("Main")) {
+                    ((MainActivity) context).updateGraph("2");
+                } else {
+                    ((ThingDetailsActivity) context).updateJson(parsedJson);
+                }
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
