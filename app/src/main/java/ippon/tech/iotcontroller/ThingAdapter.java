@@ -1,15 +1,16 @@
 package ippon.tech.iotcontroller;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.amazonaws.services.iot.model.GroupNameAndArn;
 import com.amazonaws.services.iot.model.ThingAttribute;
 
 import java.util.List;
@@ -20,9 +21,12 @@ import java.util.List;
 public class ThingAdapter extends RecyclerView.Adapter<ThingAdapter.ViewHolder> {
 
     private List<ThingAttribute> data;
+    private Context context;
 
-    public ThingAdapter(List<ThingAttribute> data) {
+    public ThingAdapter(List<ThingAttribute> data, Context context) {
+
         this.data = data;
+        this.context = context;
     }
 
     @NonNull
@@ -48,9 +52,9 @@ public class ThingAdapter extends RecyclerView.Adapter<ThingAdapter.ViewHolder> 
         }
     }
 
-
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
         public TextView textView;
+
         public ViewHolder(TextView v) {
             super(v);
             textView = v;
@@ -62,13 +66,19 @@ public class ThingAdapter extends RecyclerView.Adapter<ThingAdapter.ViewHolder> 
             Log.d(this.getClass().toString(), String.valueOf(getLayoutPosition()));
 
             int position = getLayoutPosition();
-            String groupName = data.get(position).getThingName();
-            String attributes = data.get(position).getAttributes().toString();
+            String thingName = data.get(position).getThingName();
 
-//            Intent intent = new Intent(v.getContext(), ThingDetailsActivity.class);
-//            intent.putExtra("Group", groupName);
+            Intent intent = new Intent(v.getContext(), ThingDetailsActivity.class);
+            intent.putExtra("ThingName", thingName);
 
-            Toast.makeText(v.getContext(), attributes, Toast.LENGTH_LONG).show();
+//            v.getContext().startActivity(intent);
+
+            ((MainActivity) context).loadThingShadow(thingName);
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+
         }
     }
 }

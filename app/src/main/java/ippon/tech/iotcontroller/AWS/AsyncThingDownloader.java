@@ -1,4 +1,4 @@
-package ippon.tech.iotcontroller;
+package ippon.tech.iotcontroller.AWS;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,7 +14,9 @@ import com.amazonaws.services.iotdata.AWSIotDataClient;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-public class AsyncThingDownloader extends AsyncTask <Void, Void, List<ThingAttribute>> {
+import ippon.tech.iotcontroller.MainActivity;
+
+public class AsyncThingDownloader extends AsyncTask <Void, Void, AsyncTaskResult<List<ThingAttribute>>> {
 
     private List<ThingAttribute> attributeList;
     private WeakReference<Activity> parent;
@@ -28,31 +30,32 @@ public class AsyncThingDownloader extends AsyncTask <Void, Void, List<ThingAttri
     }
 
     @Override
-    protected List<ThingAttribute> doInBackground(Void... voids) {
+    protected AsyncTaskResult<List<ThingAttribute>> doInBackground(Void... voids) {
         try {
-
             ListThingsRequest listThingsRequest = new ListThingsRequest();
             ListThingsResult listThingsResult = iotClient.listThings(listThingsRequest);
             attributeList = listThingsResult.getThings();
 
             Log.d(this.getClass().toString(), attributeList.toString());
-            return attributeList;
+            return new AsyncTaskResult<>(attributeList);
         }
         catch (Exception e) {
             Log.e(this.getClass().toString(), e.toString());
-            return attributeList;
+            return new AsyncTaskResult<>(e);
         }
     }
 
     @Override
-    protected void onPostExecute(List<ThingAttribute> thingAttributes) {
+    protected void onPostExecute(AsyncTaskResult<List<ThingAttribute>> result) {
         Context context = parent.get();
 
         if(context!= null) {
-            ((MainActivity) context).updateThingUI(thingAttributes);
-            Log.d("POST EXE", thingAttributes.toString());
+            ((MainActivity) context).updateThingUI((List<ThingAttribute>)result.getResult());
+            Log.d("POST EXE", result.getResult().toString());
         } else {
-            Log.e(this.getClass().toString(), "no context!");
+            Log.e(this.getClass().toString(), "no context!", result.getError());
         }
     }
+
+
 }

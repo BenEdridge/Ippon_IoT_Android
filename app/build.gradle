@@ -1,7 +1,12 @@
 apply plugin: 'com.android.application'
 
+def localPropertiesFile = rootProject.file("local.properties")
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(localPropertiesFile))
+
 android {
     compileSdkVersion 27
+
     defaultConfig {
         applicationId "ippon.tech.iotcontroller"
         minSdkVersion 22
@@ -9,6 +14,10 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "AWS_IOT_ENDPOINT", localProperties["aws_iot_endpoint"]
+        buildConfigField "String", "AWS_COGNITO_POOL", localProperties["aws_cognito_pool_id"]
+        buildConfigField "String", "AWS_REGION", localProperties["aws_region"]
     }
     buildTypes {
         release {
@@ -26,6 +35,7 @@ dependencies {
     implementation('com.amazonaws:aws-android-sdk-mobile-client:2.6.+@aar') { transitive = true }
     implementation 'com.amazonaws:aws-android-sdk-iot:2.6.23'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
