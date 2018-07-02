@@ -18,6 +18,7 @@ android {
         buildConfigField "String", "AWS_IOT_ENDPOINT", localProperties["aws_iot_endpoint"]
         buildConfigField "String", "AWS_COGNITO_POOL", localProperties["aws_cognito_pool_id"]
         buildConfigField "String", "AWS_REGION", localProperties["aws_region"]
+        buildConfigField "String", "AWS_IOT_ENDPOINT_FULL", localProperties["aws_iot_endpoint_full"]
     }
     buildTypes {
         release {

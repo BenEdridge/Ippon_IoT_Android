@@ -71,9 +71,8 @@ public class ThingAdapter extends RecyclerView.Adapter<ThingAdapter.ViewHolder> 
             Intent intent = new Intent(v.getContext(), ThingDetailsActivity.class);
             intent.putExtra("ThingName", thingName);
 
-//            v.getContext().startActivity(intent);
-
-            ((MainActivity) context).loadThingShadow(thingName);
+            v.getContext().startActivity(intent);
+//            ((MainActivity) context).loadThingShadow(thingName);
         }
 
         @Override

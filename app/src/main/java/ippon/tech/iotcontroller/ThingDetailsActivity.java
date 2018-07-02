@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.amazonaws.AmazonWebServiceClient;
+import com.amazonaws.services.cognitoidentity.AmazonCognitoIdentityClient;
 import com.google.gson.Gson;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.services.iot.AWSIotClient;
@@ -35,16 +37,6 @@ public class ThingDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_thing_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 

@@ -22,6 +22,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import ippon.tech.iotcontroller.AWS.AWSProvider;
 import ippon.tech.iotcontroller.AWS.AsyncThingDownloader;
 import ippon.tech.iotcontroller.AWS.AsyncThingStateDownloader;
 
@@ -29,10 +30,6 @@ import ippon.tech.iotcontroller.AWS.AsyncThingStateDownloader;
 //https://github.com/awslabs/aws-sdk-android-samples/tree/master/TemperatureControl
 //
 public class MainActivity extends AppCompatActivity {
-
-    private CognitoCachingCredentialsProvider credentialsProvider;
-    private AWSIotDataClient iotDataClient;
-    private AWSIotClient iotClient;
 
     // RecyclerView for our list of groups
     private RecyclerView recyclerView;
@@ -46,18 +43,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Setting up Cognito for unauthed access
-        credentialsProvider = new CognitoCachingCredentialsProvider(
-                getApplicationContext(),
-                Constants.AWS.COGNITO_POOL_ID,
-                Constants.AWS.REGION
-        );
-
-        iotDataClient = new AWSIotDataClient(credentialsProvider);
-        iotDataClient.setEndpoint(Constants.AWS.CUSTOM_ENDPOINT);
-
-        iotClient = new AWSIotClient(credentialsProvider);
-        iotClient.setEndpoint(Constants.AWS.CUSTOM_ENDPOINT);
+        // Get our singleton instance
+        AWSProvider.getInstance(this);
 
         // Setting up list of groups
         // https://developer.android.com/guide/topics/ui/layout/recyclerview
@@ -89,9 +76,8 @@ public class MainActivity extends AppCompatActivity {
         lineChart.invalidate();
     }
 
-
     private void initThingList() {
-        AsyncThingDownloader thingDownloader = new AsyncThingDownloader(this, iotDataClient, iotClient);
+        AsyncThingDownloader thingDownloader = new AsyncThingDownloader(this, AWSProvider.getIotDataClient(), AWSProvider.getIotData());
         thingDownloader.execute();
     }
 
@@ -108,16 +94,10 @@ public class MainActivity extends AppCompatActivity {
         recycleviewAdapter.notifyDataSetChanged();
     }
 
-    /** Called when the user touches the send device details */
-    public void onSendDeviceDetailsClick(View view) {
-
-    }
-
     public void loadThingShadow(String name) {
 
-        iotDataClient.setEndpoint("a2v8kgnoxfzsel.iot.ap-southeast-2.amazonaws.com");
-
-        AsyncThingStateDownloader thingStateDownloader = new AsyncThingStateDownloader(this, iotDataClient, name);
+        AWSProvider.getIotDataClient().setEndpoint(Constants.AWS.CUSTOM_ENDPOINT_FULL);
+        AsyncThingStateDownloader thingStateDownloader = new AsyncThingStateDownloader(this, AWSProvider.getIotDataClient(), name);
         thingStateDownloader.execute();
     }
 
