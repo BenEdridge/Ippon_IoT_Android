@@ -5,10 +5,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.amazonaws.services.iot.AWSIotClient;
-import com.amazonaws.services.iot.model.ListThingsRequest;
-import com.amazonaws.services.iot.model.ListThingsResult;
-import com.amazonaws.services.iot.model.ThingAttribute;
 import com.amazonaws.services.iotdata.AWSIotDataClient;
 import com.amazonaws.services.iotdata.model.GetThingShadowRequest;
 import com.amazonaws.services.iotdata.model.GetThingShadowResult;
@@ -17,7 +13,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 import ippon.tech.iotcontroller.MainActivity;
 import ippon.tech.iotcontroller.ThingDetailsActivity;
@@ -61,7 +56,7 @@ public class AsyncThingStateDownloader extends AsyncTask <Void, Void, AsyncTaskR
         }
     }
 
-    // Todo fix this nastiness of casting how do we go about Dyanmic type casting??
+    // Todo fix this nastiness of casting how do we go about Dynamic type casting??
     @Override
     protected void onPostExecute(AsyncTaskResult<String> result) {
         Context context = parent.get();
@@ -69,13 +64,14 @@ public class AsyncThingStateDownloader extends AsyncTask <Void, Void, AsyncTaskR
         if(context!= null) {
             int spacesToIndentEachLevel = 2;
             try {
-                String parsedJson = new JSONObject(result.getResult())
-                        .toString(spacesToIndentEachLevel);
+                JSONObject parsedJson = new JSONObject(result.getResult());
+                String parsedToString = parsedJson.toString(spacesToIndentEachLevel);
 
+                // Todo setup standard object for JSON parsing
                 if(type.equals("Main")) {
-                    ((MainActivity) context).updateGraph("2");
+                    ((MainActivity) context).updateGraph("1");
                 } else {
-                    ((ThingDetailsActivity) context).updateJson(parsedJson);
+                    ((ThingDetailsActivity) context).updateJson(parsedToString);
                 }
 
             } catch (JSONException e) {

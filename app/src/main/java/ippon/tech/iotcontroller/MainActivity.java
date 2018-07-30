@@ -10,18 +10,15 @@ import android.view.View;
 
 import com.amazonaws.services.iot.model.ThingAttribute;
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import ippon.tech.iotcontroller.AWS.AWSProvider;
 import ippon.tech.iotcontroller.AWS.AsyncThingDownloader;
@@ -68,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private void initChart() {
 
         barChart = findViewById(R.id.chart);
-        barChart.setFitBars(true); // make the x-axis fit exactly all bars
+//        barChart.setFitBars(true); // make the x-axis fit exactly all bars
     }
 
     private void initThingList() {
@@ -95,12 +92,27 @@ public class MainActivity extends AppCompatActivity {
     /** Called when the user touches the refresh */
     public void onRefreshClick(View view) {
 
-
         set = new BarDataSet(entries, "BarDataSet");
         barData = new BarData(set);
-        barChart.setData(barData);
-        barData.setBarWidth(0.5f); // set custom bar width
 
+        barChart.setData(barData);
+        barChart.setDrawGridBackground(false);
+        barChart.getDescription().setEnabled(false);
+
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setEnabled(false);
+
+        YAxis leftAxis = barChart.getAxisLeft();
+        leftAxis.setAxisMaximum(40);
+        leftAxis.setAxisMinimum(-5);
+        leftAxis.setDrawAxisLine(false);
+        leftAxis.setDrawZeroLine(false);
+        leftAxis.setDrawGridLines(false);
+
+        Legend l = barChart.getLegend();
+        l.setEnabled(false);
+
+        barChart.getAxisRight().setEnabled(false);
         barChart.invalidate();
 
         Log.d(this.getClass().toString(), String.valueOf(set.getEntryCount()));
@@ -109,10 +121,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateGraph(String parsedJson) {
-        Random r = new Random();
 
-        BarEntry barEntry = new BarEntry(r.nextInt() * 10, r.nextInt() * 10);
-        Log.d(this.getClass().toString(), parsedJson);
+        BarEntry barEntry = new BarEntry(1, 5);
         entries.add(barEntry);
     }
 }

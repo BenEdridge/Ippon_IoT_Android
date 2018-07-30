@@ -3,26 +3,12 @@ package ippon.tech.iotcontroller;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.UiThread;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.amazonaws.AmazonWebServiceClient;
-import com.amazonaws.services.cognitoidentity.AmazonCognitoIdentityClient;
-import com.google.gson.Gson;
-import com.amazonaws.auth.CognitoCachingCredentialsProvider;
-import com.amazonaws.services.iot.AWSIotClient;
-import com.amazonaws.services.iotdata.AWSIotDataClient;
-import com.google.gson.JsonObject;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import ippon.tech.iotcontroller.AWS.AWSProvider;
 import ippon.tech.iotcontroller.AWS.AsyncThingStateDownloader;
@@ -75,6 +61,24 @@ public class ThingDetailsActivity extends AppCompatActivity {
         AlertDialog alertDialog = new AlertDialog.Builder(ThingDetailsActivity.this).create();
         alertDialog.setMessage(json);
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+
+    //For setting up our SNS notifications based on temperature
+    public void onNotifyClick(View view) {
+
+    }
+
+    //For setting up our SNS notifications based on temperature
+    public void onDeleteClick(View view) {
+        AlertDialog alertDialog = new AlertDialog.Builder(ThingDetailsActivity.this).create();
+        alertDialog.setMessage("Delete this thing");
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Yes",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

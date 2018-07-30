@@ -1,11 +1,9 @@
 package ippon.tech.iotcontroller.AWS;
 
-import android.app.Application;
 import android.content.Context;
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.services.iot.AWSIotClient;
-import com.amazonaws.services.iotdata.AWSIotData;
 import com.amazonaws.services.iotdata.AWSIotDataClient;
 
 import ippon.tech.iotcontroller.Constants;
