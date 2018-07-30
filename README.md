@@ -24,4 +24,4 @@ aws_iot_endpoint_full="abcdefgh.iot.ap-southeast-2.amazonaws.com"
 # from: com.amazonaws.regions.Regions
 aws_region="ap-southeast-2"
 ```
-![Screenshot of App](https://raw.githubusercontent.com/BenEdridge/Ippon_IoT_Android/aws_iot_app_screenshot_shadow.png)
+![Screenshot of App](https://raw.githubusercontent.com/BenEdridge/Ippon_IoT_Android/master/aws_iot_app_screenshot_shadow.png)
